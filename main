@@ -1,0 +1,456 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <math.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <windows.h>
+
+
+#define BOARD_SIZE 8
+
+
+
+
+// #define VALID_MOVE(board, startColumn, startRow, endColumn, endRow, pieceType)
+//     ({
+//         bool valid = false; int8_t colDiff = endColumn - startColumn;
+//         int8_t rowDiff = endRow - startRow;
+//         uint8_t color = board[startRow][startColumn].piece.color;
+//         switch (pieceType) {
+//             case PAWN:
+//
+//                 if (color == WHITE) {
+//                     if ((startRow == 1 && rowDiff == 2 && colDiff == 0) || (rowDiff == 1 && colDiff == 0)) {
+//                         valid = true;
+//                     }
+//                 } else {
+//                     if ((startRow == 6 && rowDiff == -2 && colDiff == 0) || (rowDiff == -1 && colDiff == 0)) {
+//                         valid = true;
+//                     }
+//                 }
+//                 break;
+//             case ROOKL:
+//             case ROOKR:
+//
+//                 if ((rowDiff == 0 && colDiff != 0) || (rowDiff != 0 && colDiff == 0)) {
+//                     valid = true;
+//                 }
+//                 break;
+//             case KNIGHTL:
+//             case KNIGHTR:
+//
+//                 if (abs(rowDiff) == 2 && abs(colDiff) == 1) {
+//                     valid = true;
+//                 } else if (abs(rowDiff) == 1 && abs(colDiff) == 2) {
+//                     valid = true;
+//                 }
+//                 break;
+//             case BISHOPL:
+//             case BISHOPR:
+//
+//                 if (abs(rowDiff) == abs(colDiff)) {
+//                     valid = true;
+//                 }
+//                 break;
+//             case QUEEN:
+//
+//                 if ((rowDiff == 0 && colDiff != 0) || (rowDiff != 0 && colDiff == 0) || (abs(rowDiff) == abs(colDiff))) {
+//                     valid = true;
+//                 }
+//                 break;
+//             case KING:
+//
+//                 if (abs(rowDiff) <= 1 && abs(colDiff) <= 1) {
+//                     valid = true;
+//                 }
+//                 break;
+//         }
+//         valid;
+//     })
+
+
+
+
+
+// bool isthreatbybishop (char kingpos[], char bishoppos[]){
+//     uint16_t kingcol = kingpos[0]-'a'+1;
+//     uint16_t kingrow = kingpos[1]-'0';
+//     uint16_t bishopcol = bishoppos[0]-'a'+1;
+//     uint16_t bishoprow = bishoppos[0]-'0';
+//
+//     uint16_t coldiff = abs(kingcol - bishopcol);
+//     uint16_t rowdiff = abs(kingrow - bishoprow);
+//
+//     if (coldiff == rowdiff) {
+//     return true;
+// }
+// else
+// {
+//     return false;
+// }
+
+void changetextcolor(int Color) {
+    HANDLE hconsole = GetStdHandle (STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hconsole,Color);
+}
+
+
+
+
+
+
+// #define IS_VALID_ROOK_MOVE(startColumn, startRow, endColumn, endRow) ((endColumn == startColumn) || (endRow == startRow))
+//
+//
+//
+// #define IS_VALID_KNIGHT_MOVE(startColumn, startRow, endColumn, endRow) (((abs(startColumn - endColumn) == 2) && (abs(startRow - endRow) == 1)) || ((abs(startColumn - endColumn) == 1) && (abs(startRow - endRow) == 2)))
+
+
+    #define  WHITE 0
+    #define  BLACK 1
+
+
+
+    #define PAWN 0
+    #define ROOKL 1
+    #define ROOKR 6
+    #define KNIGHTL 2
+    #define KNIGHTR 7
+    #define BISHOPL 3
+    #define BISHOPR 8
+    #define QUEEN 4
+    #define KING 5
+
+
+typedef struct{
+    uint8_t color;
+    uint8_t type;
+}Piece;
+
+typedef struct{
+    uint8_t occupied;
+    Piece  piece;
+}Square;
+
+#define IS_VALID_WHITE_PAWN_MOVE(startColumn, startRow, endColumn, endRow) ((endRow == (startRow + 1)) && (endColumn == startColumn))
+//#define IS_VALID_BLACK_PAWN_MOVE(startColumn, startRow, endColumn, endRow) ((endRow == (startRow - 1)) && (endColumn == startColumn))
+ #define IS_VALID_WHITE_PAWN_MOVE_FROM_START(startColumn, startRow, endColumn, endRow) (((endRow ==(startRow + 1)) && (endColumn == startColumn))||((endRow ==(startRow + 2)) && (endColumn == startColumn)))
+// #define IS_VALID_BLACK_PAWN_MOVE_FROM_START(startColumn, startRow, endColumn, endRow) (((endRow ==(startRow - 1)) && (endColumn == startColumn))||((endRow ==(startRow - 2)) && (endColumn == startColumn)))
+ #define IS_VALID_ROOK_MOVE(startColumn, startRow, endColumn, endRow) ((endRow == startRow) && (endColumn != startColumn))||((endRow != startRow) && (endColumn == startColumn))
+int isValidMove(Piece* piece, char startColumn, uint16_t startRow, char endColumn, uint16_t endRow) {
+    switch (piece->type ) {
+        case PAWN :{
+            if (piece->color == WHITE && startRow == 1) {
+                printf("piece->type %d\n",piece->type);
+                printf("1\n");
+                return IS_VALID_WHITE_PAWN_MOVE_FROM_START(startColumn, startRow, endColumn, endRow);
+                }else if (piece->color == WHITE) {
+                    printf("piece->type %d\n",piece->type);
+                    return IS_VALID_WHITE_PAWN_MOVE(startColumn, startRow, endColumn, endRow);
+                 }
+        //     if (piece->color == BLACK && startRow == 7) {
+        //         printf("piece->type %d\n",piece->type);
+        //         return IS_VALID_BLACK_PAWN_MOVE_FROM_START(startColumn, startRow, endColumn, endRow);
+        //         }else if (piece->color == BLACK) {
+        //             printf("piece->type %d\n",piece->type);
+        //             return IS_VALID_BLACK_PAWN_MOVE(startColumn, startRow, endColumn, endRow);
+        //         }
+           break;
+
+        // case ROOKL:{
+        //     printf("piece->type %d\n",piece->type);
+        //     return  IS_VALID_ROOK_MOVE(startColumn, startRow, endColumn, endRow);
+        // }
+        // break;
+        // case ROOKR:{
+        //     printf("piece->type %d\n",piece->type);
+        //     return  IS_VALID_ROOK_MOVE(startColumn, startRow, endColumn, endRow);
+        // }
+        // break;
+            // case ROOKL:
+            // case ROOKR:
+            //     return IS_VALID_ROOK_MOVE(startColumn, startRow, endColumn, endRow);
+            // case KNIGHTL:
+            // case KNIGHTR:
+            //     return IS_VALID_KNIGHT_MOVE(startColumn, startRow, endColumn, endRow);
+        }
+        default:{
+            printf("piece->type %d\n",piece->type);
+            printf("DEFAULT\n");
+            printf("%c%d %c%d\n",startColumn,startRow,endColumn,endRow);
+            return false;
+        }
+    }
+}
+
+
+void initboard(Square board[BOARD_SIZE][BOARD_SIZE]){
+    for (uint16_t i = 0; i < BOARD_SIZE; i++) {
+        board[1][i].occupied=true;
+        board[1][i].piece.color=WHITE;
+        board[1][i].piece.type=PAWN;
+    }
+    board[0][0].occupied = true;
+    board[0][0].piece.color = WHITE;
+    board[0][0].piece.type = ROOKL;
+    board[0][1].occupied = true;
+    board[0][1].piece.color = WHITE;
+    board[0][1].piece.type = KNIGHTL;
+    board[0][2].occupied = true;
+    board[0][2].piece.color = WHITE;
+    board[0][2].piece.type = BISHOPL;
+    board[0][3].occupied = true;
+    board[0][3].piece.color = WHITE;
+    board[0][3].piece.type = QUEEN;
+    board[0][4].occupied = true;
+    board[0][4].piece.color = WHITE;
+    board[0][4].piece.type = KING;
+    board[0][5].occupied = true;
+    board[0][5].piece.color = WHITE;
+    board[0][5].piece.type = BISHOPR;
+    board[0][6].occupied = true;
+    board[0][6].piece.color = WHITE;
+    board[0][6].piece.type = KNIGHTR;
+    board[0][7].occupied = true;
+    board[0][7].piece.color = WHITE;
+    board[0][7].piece.type = ROOKR;
+    for (uint16_t i = 0; i < BOARD_SIZE; i++) {
+        board[6][i].occupied = true;
+        board[6][i].piece.color = BLACK;
+        board[6][i].piece.type = PAWN;
+    }
+    board[7][0].occupied = true;
+    board[7][0].piece.color = BLACK;
+    board[7][0].piece.type = ROOKL;
+    board[7][1].occupied = true;
+    board[7][1].piece.color = BLACK;
+    board[7][1].piece.type = KNIGHTL;
+    board[7][2].occupied = true;
+    board[7][2].piece.color = BLACK;
+    board[7][2].piece.type = BISHOPL;
+    board[7][3].occupied = true;
+    board[7][3].piece.color = BLACK;
+    board[7][3].piece.type = QUEEN;
+    board[7][4].occupied = true;
+    board[7][4].piece.color = BLACK;
+    board[7][4].piece.type = KING;
+    board[7][5].occupied = true;
+    board[7][5].piece.color = BLACK;
+    board[7][5].piece.type = BISHOPR;
+    board[7][6].occupied = true;
+    board[7][6].piece.color = BLACK;
+    board[7][6].piece.type = KNIGHTR;
+    board[7][7].occupied = true;
+    board[7][7].piece.color = BLACK;
+    board[7][7].piece.type = ROOKR;
+
+}
+// int kingmissing (Square* board){
+//     if ( ((board + (((0 * 8) + 4)))->piece.type != KING) ||
+//          ((board + (((7 * 8) + 4)))->occupied != KING)
+//     ){
+//
+//         printf("aboba\n");
+//         return 1;
+//     }
+//     else{
+//         return 0;
+//     }
+// }
+
+void displayboard(Square board[BOARD_SIZE][BOARD_SIZE]) {
+
+    printf(" a b c d e f g h\n" );
+    for (uint16_t row = 0; row < BOARD_SIZE; row++) {
+        changetextcolor(7);
+        printf("%d",row +1 );
+
+        for (uint16_t col = 0; col < BOARD_SIZE; col++) {
+            if (board[row][col].occupied) {
+                if (board[row][col].piece.color==BLACK) {
+                    changetextcolor(12);
+                }else{
+                    changetextcolor(9);
+                }
+                char colorChar = (board[row][col].piece.type==WHITE)?'w':'b';
+                char pieceChar;
+
+                switch (board[row][col].piece.type) {
+                    case PAWN:
+                    pieceChar = 'p';
+                    break;
+                    case ROOKL:
+                    pieceChar = 'r';
+                    break;
+                    case KNIGHTL:
+                    pieceChar = 'n';
+                    break;
+                    case BISHOPL:
+                    pieceChar = 'b';
+                    break;
+                    case QUEEN:
+                    pieceChar = 'q';
+                    break;
+                    case KING:
+                    pieceChar = 'k';
+                    break;
+                    case ROOKR:
+                    pieceChar = 'r';
+                    break;
+                    case KNIGHTR:
+                    pieceChar = 'n';
+                    break;
+                    case BISHOPR:
+                    pieceChar = 'b';
+                    break;
+                }
+                printf("%c ",pieceChar);
+            }else{
+                changetextcolor(7);
+                printf(". " );
+            }
+        }
+        printf("\n" );
+    }
+
+}
+
+
+void makemove (Square board[BOARD_SIZE][BOARD_SIZE],char startColumnIndex, uint16_t startRowIndex, char endColumnIndex, uint16_t endRowIndex) {
+    if (board[startRowIndex][startColumnIndex].occupied) {
+        board[endRowIndex][endColumnIndex].piece.type = board[startRowIndex][startColumnIndex].piece.type;
+        board[endRowIndex][endColumnIndex].piece.color = board[startRowIndex][startColumnIndex].piece.color;
+        board[endRowIndex][endColumnIndex].occupied = true;
+
+            board[startRowIndex][startColumnIndex].piece.type = 0;
+            board[startRowIndex][startColumnIndex].occupied = false;
+            board[startRowIndex][startColumnIndex].piece.color = 0;
+}
+}
+
+void inputMove(Square board[BOARD_SIZE][BOARD_SIZE]){
+    int nextturnwhite = 0,nextturnblack = 0;
+    static char startColumn, endColumn;
+    static int startRow, endRow;
+    while (true) {
+
+        printf("\nEnter turn\n");
+        if (piece->type == WHITE) {
+            nextturnwhite = 1;
+
+        }
+        if (piece->type == BLACK) {
+            nextturnblack = 1;
+
+        }
+        if (nextturnblack == 1) {
+
+        }
+        if (scanf(" %c%d %c%d", &startColumn, &startRow, &endColumn, &endRow)!= 4) {
+            printf("%c%d %c%d\n",startColumn,startRow,endColumn,endRow);
+            printf("Invalid input format. Try again.\n");
+            while (getchar()!='\n');
+                 continue;
+        }
+
+        startColumn = (uint8_t)(tolower (startColumn)-'a');
+        endColumn = (uint8_t)(tolower(endColumn)-'a');
+        startRow--;
+        endRow--;
+        if ((startColumn < 0) || (startColumn >= BOARD_SIZE) || (startRow < 0) || (startRow >= BOARD_SIZE) ||
+        (endColumn < 0) || (endColumn>= BOARD_SIZE) || (endRow < 0) || (endRow >= BOARD_SIZE) ) {
+            printf("Invalid coordinats\n" );
+            continue;
+        }
+        break;
+
+    }
+    isValidMove(&board[BOARD_SIZE][BOARD_SIZE].piece, startColumn, startRow, endColumn, endRow);
+    makemove (board, startColumn, startRow, endColumn, endRow);
+    return;
+}
+int isthreatbyrook (Square board[BOARD_SIZE][BOARD_SIZE]){
+    uint16_t BkingRow = -1;
+    uint16_t BkingCol = -1;
+    uint16_t WkingRow = -1;
+    uint16_t WkingCol = -1;
+    uint16_t LWrookRow = -1;
+    uint16_t LWrookCol = -1;
+    uint16_t LBrookRow = -1;
+    uint16_t LBrookCol = -1;
+    uint16_t RBrookRow = -1;
+    uint16_t RBrookCol = -1;
+    uint16_t RWrookRow = -1;
+    uint16_t RWrookCol = -1;
+    for (uint16_t i = 0; i < BOARD_SIZE; i++) {
+        for (uint16_t l = 0; l < BOARD_SIZE; l++) {
+            if (board[i][l].piece.type==KING && board[i][l].piece.color==WHITE) {
+                WkingRow = i;
+                WkingCol = l;
+            }else if (board[i][l].piece.type==ROOKL && board[i][l].piece.color==BLACK) {
+                    LBrookRow = i;
+                    LBrookCol = l;
+                }else if (board[i][l].piece.type==ROOKR&&board[i][l].piece.color==BLACK) {
+                        RBrookRow = i;
+                        RBrookCol = l;
+                    }
+        }
+    }
+    if (WkingRow == RBrookRow || WkingCol == LBrookCol||WkingCol == RBrookCol||WkingRow == LBrookRow) {
+    return 1;
+}else {
+for (uint16_t i = 0; i < BOARD_SIZE; i++) {
+    for (uint16_t l = 0; l < BOARD_SIZE; l++) {
+        if (board[i][l].piece.type == KING && board[i][l].piece.color == BLACK) {
+            BkingRow = i;
+            BkingCol = l;
+        }else if (board[i][l].piece.type == ROOKL && board[i][l].piece.color == WHITE) {
+                LWrookRow = i;
+                LWrookCol = l;
+            }else if (board[i][l].piece.type == ROOKR && board[i][l].piece.color == WHITE) {
+                    RWrookRow = i;
+                    RWrookCol = l;
+                }
+    }
+}}
+if ((BkingRow == RWrookRow) || (BkingCol == LWrookCol) || (BkingCol == RWrookCol) || (BkingRow == LWrookRow)) {
+// printf("%d == %d \n",BkingRow, RWrookRow);
+// printf("%d == %d \n",BkingCol, LWrookCol);
+// printf("%d == %d \n",BkingRow, LWrookRow);
+// printf("%d == %d \n", BkingCol,RWrookCol);
+// printf("%d == %d \n",RWrookRow, );
+// printf("%d == %d \n",RWrookCol, );
+    return 2;
+}else
+return 0;
+}
+
+
+
+int main(int argc, char const *argv[]) {
+    Square board[BOARD_SIZE][BOARD_SIZE] = {0};
+    initboard(board);
+    while (true) {
+
+        displayboard(board);
+        changetextcolor(7);
+    int isKingUnderThreat = isthreatbyrook(board);
+        if (isKingUnderThreat==1) {
+            printf("\nWhite king is under attack\n");
+        }else{
+            if (isKingUnderThreat==2) {
+                printf("Black king is under attack\n" );
+        }
+        }
+        int startRow=0;
+        char startColumn=0;
+        int endRow = 0;
+        char endColumn = 0;
+        int piece = 0;
+        inputMove(board);
+
+    }
+
+return 0;
+}
